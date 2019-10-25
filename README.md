@@ -6,11 +6,11 @@ However, the package also includes DM_Table_WP, which is a class prepared specif
 
 __Note: all past values should be sanitized and escaped__
 
-License
+# License
 GPL2
 
-For usage, you can see at this link: 
+# Basic Usage 
 [DM Table](https://www.iljester.com/portfolio/dm-table/)
 
-For donate:
+# Donate
 [Donate](https://www.iljester.com/donate)
