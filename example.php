@@ -19,7 +19,7 @@ $dm_table = new DM_Table;
 /**
  * Set base url, which is the url where is localized your script (in this case: example.php)
  */
-$your_url = 'https://www.iljester.com/tests/dm-table/example.php';
+$your_url = 'INSERT_YOUR_URL';
 $dm_table->setBaseUrl( $your_url );		
 
 /**
@@ -380,8 +380,8 @@ $dm_table->innerRow( 2, 'innered-row', function( $columns, $instance, $users ) {
 <!doctype html>
 <html>
 <head>
-	<link rel="stylesheet" href="https://www.iljester.com/tests/dm-table/css/reset.css" />
-	<link rel="stylesheet" href="https://www.iljester.com/tests/dm-table/css/dm-table.css" />
+	<link rel="stylesheet" href="../css/reset.css" />
+	<link rel="stylesheet" href="../css/dm-table.css" />
 	<style>
 	p.generated {
 		text-align: right;
