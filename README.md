@@ -8,4 +8,4 @@ __Note: all past values should be sanitized and escaped__
 
 # Basic Usage
 
-For usage, you can see at this link: http://www.iljester.com/portfolio/dm-table/
+For usage, you can see at this link: [link](http://www.iljester.com/portfolio/dm-table/)
