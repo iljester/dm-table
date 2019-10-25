@@ -4,7 +4,7 @@ DM Table is not a real plugin, but a PHP class for creating tables. It is a tabl
 
 However, the package also includes DM_Table_WP, which is a class prepared specifically for WordPress. DM_Table WP is not an extension of DM_Table, but uses a DM_Table instance.
 
-__Note: all past values should be sanitized and escaped__
+__Note: all passed values should be sanitized and escaped__
 
 ## License
 GPL2
