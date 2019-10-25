@@ -406,7 +406,7 @@ class DM_Table {
 	 * @return int
 	 * @since 1.0
 	 */
-    public static function absint( $value = null ) {
+    	public static function absint( $value = null ) {
 
 		if( !is_numeric( $value ) ) {
 			return 0;
