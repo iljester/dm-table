@@ -1,9 +1,5 @@
 <?php
 
-if( ! defined( 'DM_TABLE_LOC' ) || DM_TABLE_LOC !== 'iljestertherealfile' ) {
-	die('It is a joke?');
-}
-
 /********************************************************************************
  * DM Table
  *
