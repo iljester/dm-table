@@ -248,9 +248,9 @@ class DM_Table {
 	 * @access protected
 	 * @since 1.0
 	 */
-    protected $_table_args = array();
+    	protected $_table_args = array();
 
-    /**
+    	/**
 	 * $_header
 	 * Contains an array of values ​​that define the table columns
 	 *
@@ -1387,8 +1387,7 @@ class DM_Table {
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @params
 	 * 		$args	|array	  // an array of arguments to set sortable
-	 * 					         allowed: ['order', 'orderby', 'arrows']
-	 * 					         see the method for descriptions
+	 * 		                  for arguments, see: DM_Table::$defaults['set_sortable']
 	 * 		$input	|string	  // create a input for setSortable (select type).
 	 *  	$submit	|string	  // create a input submit. Set false to not display
 	 * @access public
@@ -1408,17 +1407,6 @@ class DM_Table {
 		if( ( ! is_string( $submit ) || empty( $submit ) ) && false !== $submit ) {
 			die( $this->getMessage( 'sortable_submit', "Error: \$submit must be set as string and/or not empty, otherwise set false in setSortable method" ) );
 		}
-
-		/**
-		 * Only for documentations (may be not updated)
-		 * @see self::$defaults['set_sortable'] instead
-		 *******************************************************************************************
-		$defaults = array(
-			'order'	  		  => array( 'order', 'asc', 'desc' ),					// set order
-			'orderby'	  	  => array( 'orderby', 'id' ),							// set orderby
-			'arrows'		  => array( 'asc' => '&dtrif;', 'desc' => '&utrif;'),	// set arrows
-		);
-		*******************************************************************************************/
 
 		$defaults = self::$defaults['set_sortable'];
 
@@ -1463,9 +1451,8 @@ class DM_Table {
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @params
 	 * 		$args	|mixed value	  // passed string contain an array or array['search'] contain an array
-	 * 					     		     allowed: ['search']
-	 * 					     		     see the method for details
-	 * 		$input	|string	  		  // create a input for search (text|search type).
+	 * 					  for arguments, see: DM_Table::$defaults['set_search']
+	 * 		$input	|string	          // create a input for search (text|search type).
 	 *  	$submit	|string	  		  // create a input submit. Set false to not display
 	 * @access public
 	 * @return void
@@ -1488,15 +1475,6 @@ class DM_Table {
 		if( ( ! is_string( $submit ) || empty( $submit ) ) && false !== $submit ) {
 			die( $this->getMessage( 'search_submit', "Error: \$submit must be set as string and/or not empty, otherwise set false in setSearch method" ) );
 		}
-
-		/**
-		 * Only for documentations (may be not updated)
-		 * @see self::$defaults['set_search'] instead
-		 *******************************************************************************************
-		$defaults = array(
-			'search' 			=> array( 'search_action', '' ),		// name of action and default value
-		);
-		*******************************************************************************************/
 		
 		$defaults = self::$defaults['set_search'];
 
@@ -1529,8 +1507,7 @@ class DM_Table {
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @params
 	 * 		$args	|array	  // an array of arguments to set actions
-	 * 					     	 allowed: ['action', 'bulk', 'js_callback']
-	 * 					     	 see the method for descriptions
+	 * 				  for arguments, see: DM_Table::$defaults['set_actions']
 	 * 		$input	|string	  // create a input for actions (select type).
 	 *  	$submit	|string	  // create a input submit. Set false to not display
 	 * @access public
@@ -1550,15 +1527,6 @@ class DM_Table {
 		if( ( ! is_string( $submit ) || empty( $submit ) ) && false !== $submit ) {
 			die( $this->getMessage( 'actions_submit', "Error: \$submit must be set as string and/or not empty, otherwise set false in setActions method" ) );
 		}
-
-		/**
-		 * Only for documentations (may be not updated)
-		 * @see self::$defaults['set_actions'] instead
-		 *******************************************************************************************
-		$defaults = array(
-			'action'		  => array( 'select_action', '-1' ), 		// select action and default value
-		);
-		*******************************************************************************************/
 
 		$defaults = self::$defaults['set_actions'];
 
@@ -1591,8 +1559,8 @@ class DM_Table {
 	 *
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @params
-	 * 		$input	|array	  // create an array of inputs. One for each filter (select type).
-	 * 						 	 Each filter must include two array values: ['filter','input']
+	 * 	$inputs	|array	  // create an array of inputs. One for each filter (select type).
+	 * 			  Each filter must include two array keys: ['filter','input']
 	 *  	$submit	|string	  // create a input submit. Set false to not display
 	 * @access public
 	 * @return void
@@ -1645,9 +1613,8 @@ class DM_Table {
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @params
 	 * 		$args	|mixed value	  // passed string contain an array, or array['perpage'] to set perpage
-	 * 					     		 	 allowed: ['perpage']
-	 * 					     		 	 see the method for details
-	 * 		$input	|string	  		  // create a input for actions (select type).
+	 * 					  for arguments, see: DM_Table::$defaults['set_perpage']
+	 * 		$input	|string	          // create a input for actions (select type).
 	 *  	$submit	|string	  		  // create a input submit. Set false to not display
 	 * @access public
 	 * @return void
@@ -1670,15 +1637,6 @@ class DM_Table {
 		if( ( ! is_string( $submit ) || empty( $submit ) ) && false !== $submit ) {
 			die( $this->getMessage( 'sortable_submit', "Error: \$submit must be set as string and/or not empty, otherwise set false in setSortable method" ) );
 		}
-
-		/**
-		 * Only for documentations (may be not updated)
-		 * @see self::$defaults instead
-		 *******************************************************************************************
-		$defaults = array(
-			'perpage' => array( 'perpage', 5 ), 						// set action name and default value for perpage
-		);
-		*******************************************************************************************/
 
 		$defaults = self::$defaults['set_perpage'];
 
@@ -1709,8 +1667,8 @@ class DM_Table {
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @param
 	 * 		$args	 |array   // an array of values.
-	 * 						     allowed: ['total_rows', 'start', 'limit', 'action_uri', 'buttons']
-	 * 						  // see method for descriptions
+	 * 				  allowed: ['total_rows', 'start', 'limit', 'action_uri', 'buttons']
+	 * 				  // see method for descriptions
 	 * @access public
 	 * @return void
 	 * @since 1.0
@@ -1720,26 +1678,6 @@ class DM_Table {
 		if( ! is_array( $args ) ) {
 			$args = array();
 		}
-
-		/**
-		 * Only for documentations (may be not updated)
-		 * @see self::$defaults instead
-		 *******************************************************************************************
-		$defaults = array(
-			'total_rows' => 0, 						// total rows of items
-			'start'		 => array( 'pag', 1 ), 		// start page
-			'limit' 	 => array( 'perpag', 5 ),	// number of items for each page
-			'action_uri' => false,					// action uri to the form
-			'buttons'    => array(					// buttons next|prev
-				'next_page'  => '&rsaquo;',
-				'prev_page'  => '&lsaquo;',
-				'last_page'  => '&raquo;',
-				'first_page' => '&laquo;'
-			),
-			'of_pages' => 'of $1'
-				
-		);
-		*******************************************************************************************/
 
 		$defaults = self::$defaults['set_pagination'];
 
@@ -1811,12 +1749,12 @@ class DM_Table {
 	 * 
 	 * author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @params
-	 * 		$callback  	 |mixed value	 // string or array for callable function or method
-	 * 		$instance 	 |object		 // If you are using a class that extends DM_Table or uses DM_Table anyway,
-	 * 										you can pass your class instance here. Make sure though that you also pass the instance of DM_Table.
-	 * 										It may be useful.
-	 * 		$args		 |array			 // an array of arguments you would like to pass in the callback function
-	 * 		$syntax_only |bool   		 // @see: https://www.php.net/manual/en/function.is-callable.php
+	 * 		$callback  	 |mixed value	// string or array for callable function or method
+	 * 		$instance 	 |object	// If you are using a class that extends DM_Table or uses DM_Table anyway,
+	 * 						you can pass your class instance here. Make sure though that you also pass the instance of DM_Table.
+	 * 						It may be useful.
+	 * 		$args		 |array		// an array of arguments you would like to pass in the callback function
+	 * 		$syntax_only |bool   		// @see: https://www.php.net/manual/en/function.is-callable.php
 	 * @access public
 	 * @return mixed value
 	 * @since 1.0
@@ -1844,7 +1782,7 @@ class DM_Table {
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @param
 	 * 		$args  |array	  // an array of values
-	 * 						  // see static property DM_Table::$defaults['set_table'] for description
+	 * 				  for arguments, see: DM_Table::$defaults['set_table']
 	 * @access public
 	 * @return void
 	 * @since 1.0
@@ -1854,37 +1792,6 @@ class DM_Table {
 		if( ! is_array( $args ) ) {
 			$args = array();
 		}
-
-		/**
-		 * Only for documentations (may be not updated)
-		 * @see self::$defaults instead
-		 *******************************************************************************************
-		$defaults = array(
-			'header'   		 => array(),				// an array of values to set columns name
-			'content'  		 => array(),				// an array of values to set the content table
-			'footer'   		 => true,					// It is a boolean value that determines the display of the footer as a mirror of the header
-			'no_data'  		 => 'No items Yet',			// text to display if no items found
-			'raw_data' 		 => false,					// raw data are the data you use to create the table list (used only for innerRow method)
-			'form' => array(						    // form to send table data through actions
-				'method' => ['GET', 'POST', 'GET'],		   // mixed values string|array. Array ex. ['GET', 'GET', 'POST']. First on form top, second on table, third 				on 												  bottom
-				'action' 			 	 => '',			   // set action uri for all forms
-				'submit' 			 	 => false,		   // set custom submit input
-				'submit_default_val' 	 => 'Submit',	   // submit button default value (only if false submit)
-				'submit_on_top'		 	 => true,		   // set false to hide button submit on top
-				'submit_on_bottom'	 	 => true,		   // set false to hide button submit on bottom
-				'enctype' 			 	 => false,	   	   // mixed values bool|array. Array ex. [true, true, false]. First on top form, secondo on table, third on bottom
-				'hidden_fields_inputs'	 => array()		   // build hidden fields
-			),	
-			'sortable' 				=> false,			// activate sortable
-			'table_fixed'			=> true,			// set true to render table fixed
-			'table_id'				=> '',				// set id for table
-			'scope_row'				=> false,			// set scope row
-			'before_list'			=> array(),			// an array of arguments to populate before list. Allowed tags: a, em, i, span, strong, ul, li, b, u
-			'after_list'			=> array()			// an array of arguments to populate after list. Allowed tags: a, em, i, span, strong, ul, li, b, u
-			'column_bulk'			=> false			// set column name for bulk
-			'bulk_js_callback'		=> false			// set js callback for bulk
-		);
-		*******************************************************************************************/
 
 		$defaults = self::$defaults['set_table'];
 
@@ -1974,7 +1881,7 @@ class DM_Table {
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @param
 	 * 		$args  |array	  // an array of values
-	 * 						  // see static property DM_Table::$defaults['set_table'] for description
+	 * 				  for arguments, see: DM_Table::$defaults['set_table']
 	 * @access public
 	 * @return void
 	 * @since 1.0
@@ -2013,9 +1920,9 @@ class DM_Table {
 	 *
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @params
-	 * 		$after			|int 		// index array item after insert row
-	 * 		$class			|string		// class assigned to the row
-	 * 		$callback		|function	// a callback function to customize row
+	 * 		$after		|int 		// index array item after insert row
+	 * 		$class		|string		// class assigned to the row
+	 * 		$callback	|function	// a callback function to customize row
 	 * 		$instance   	|object		// see setData method for description
 	 * 		$syntax_only	|bool		// see setData method for description
 	 * @access public
@@ -2267,18 +2174,17 @@ class DM_Table {
 
 	}
 
-
-    /**
-     * We build table meta header
-     * This will be used to construct the header and the footer of the table
-     *
-     * @author Davide Mura (iljester) <muradavi@gmail.com>
-     * @param
-     * 		$footer 	|bool 	//It is used to determine if it is a header or footer render
-     * @access protected
-     * @return void
-     * @since 1.0
-     */
+      /**
+       * We build table meta header
+       * This will be used to construct the header and the footer of the table
+       *
+       * @author Davide Mura (iljester) <muradavi@gmail.com>
+       * @param
+       * 		$footer   |bool    //It is used to determine if it is a header or footer render
+       * @access protected
+       * @return void
+       * @since 1.0
+       */
 	protected function _metaHeader( $footer = false ) {
 
 		if( empty( $this->_table_args ) ) {
@@ -2384,27 +2290,27 @@ class DM_Table {
 	}
 
 	/**
-     * Render table header
-     *
-     * @author Davide Mura (iljester) <muradavi@gmail.com>
-     * @access protected
-     * @return void
-     * @since 1.0
-     */    
+         * Render table header
+         *
+         * @author Davide Mura (iljester) <muradavi@gmail.com>
+         * @access protected
+         * @return void
+         * @since 1.0
+         */    
 	protected function _header() {
 
 		return $this->_metaHeader();
 	   
 	}
 
-    /**
-     * Render table footer
-     *
-     * @author Davide Mura (iljester) <muradavi@gmail.com>
-     * @access protected
-     * @return void
-     * @since 1.0
-     */    
+	/**
+	 * Render table footer
+	 *
+	 * @author Davide Mura (iljester) <muradavi@gmail.com>
+	 * @access protected
+	 * @return void
+	 * @since 1.0
+	 */    
 	protected function _footer() {
 
 		$footer = ! empty( $this->_table_args ) ? $this->_table_args['footer'] : false;
@@ -2416,14 +2322,14 @@ class DM_Table {
 	   
 	}
 
-    /**
-     * Render table content
-     *
-     * @author Davide Mura (iljester) <muradavi@gmail.com>
-     * @access protected
-     * @return void
-     * @since 1.0
-     */
+	/**
+	 * Render table content
+	 *
+	 * @author Davide Mura (iljester) <muradavi@gmail.com>
+	 * @access protected
+	 * @return void
+	 * @since 1.0
+	 */
 	protected function _content() {
 
 		if( empty( $this->_table_args ) ) {
@@ -2515,14 +2421,14 @@ class DM_Table {
    
 	}
 
-    /**
-     * Render table submit
-     *
-     * @author Davide Mura (iljester) <muradavi@gmail.com>
-     * @access protected
-     * @return voif
-     * @since 1.0
-     */
+	/**
+	 * Render table submit
+	 *
+	 * @author Davide Mura (iljester) <muradavi@gmail.com>
+	 * @access protected
+	 * @return voif
+	 * @since 1.0
+	 */
 	protected function _submit() {
 
 		if( empty( $this->_table_args ) ) {
@@ -2543,14 +2449,14 @@ class DM_Table {
 
 	}
 
-    /**
-     * Render table
-     *
-     * @author Davide Mura (iljester) <muradavi@gmail.com>
-     * @access protected
-     * @return voif
-     * @since 1.0
-     */
+	/**
+	 * Render table
+	 *
+	 * @author Davide Mura (iljester) <muradavi@gmail.com>
+	 * @access protected
+	 * @return voif
+	 * @since 1.0
+	 */
 	protected function _table() {
 
 		if( empty( $this->_table_args ) ) {
@@ -2805,9 +2711,10 @@ class DM_Table {
 
 	}
 
-    /**
-     * Display complete table
+       /**
+         * Display complete table
 	 *
+	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @access public
 	 * @return void
 	 * @since 1.0
