@@ -13,4 +13,4 @@ GPL2
 [DM Table](https://www.iljester.com/portfolio/dm-table/)
 
 ## Donate
-[Donate](https://www.iljester.com/donate)
+[Donate](http://www.iljester.com/donate-donazione/)
