@@ -8,4 +8,14 @@ __Note: all past values should be sanitized and escaped__
 
 # Basic Usage
 
+`$instance = new DM_Table;`
+
+Then, you must set input selections through:
+
+`$instance->setSortable( $args, $input, $submit )`
+`$instance->setActions( $args, $input, $submit )`
+`$instance->setFilters( $inputs, $submit )`
+`$instance->setPerpage( $args, $input, $submit )`
+`$instance->setSearch( $args, $input, $submit )`
+
 For usage, you can see at this link: [DM Table](http://www.iljester.com/portfolio/dm-table/)
