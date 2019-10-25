@@ -29,7 +29,6 @@
  * DM_Table_WP
  * Require DM_Table
  */
-
 if( ! class_exists( 'DM_Table' ) ) {
 	die( 'DM_Table_WP requires DM_Table' );
 }
@@ -218,7 +217,7 @@ class DM_Table_WP {
 	 *
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @params
-	 * 		$base_url  |string  // the page url if is implemented the table
+	 * 		$base_url  |string      // the page url if is implemented the table
 	 * 		$domain	   |string	// a language domain
 	 * @return void
 	 * @since 1.0
