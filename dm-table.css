@@ -1,0 +1,273 @@
+/**
+ * General
+ */
+
+.dm-table p {
+	padding: 5px 0;
+	margin: 0;
+}
+
+.dm-table label span {
+	margin-right: 10px;
+}
+
+.dm-table .dm-actions form,
+.dm-table .dm-settings form {
+	display: inline-block;
+}
+
+.dm-table .dm-of {
+	font-weight: bold;
+	margin: 0 10px 0 5px;
+}
+
+/**
+ * Inputs
+ */
+
+.dm-table input[type="submit"],
+.dm-table input[type="button"],
+.dm-table input[type="reset"],
+.dm-table button,
+.dm-table .dm-nav-btn {
+	background-color: #ececec;
+	text-decoration: none;
+	color: #000;
+	border-radius: 3px;
+	box-shadow: 0 1px 0px 0px #fff;
+	border: 1px solid #d4d4d4;
+	border-bottom-width: 2px;
+	text-shadow: 0 1px 0 #fff;
+	display: inline-block;
+	text-align: center;
+	margin: 0 1px;
+	padding: 5px 10px;
+	vertical-align: middle;
+}
+
+.dm-table input[type="text"],
+.dm-table input[type="search"] {
+	padding: 5px;
+	border: 1px solid #ddd;
+	vertical-align: middle;
+	width: 70px;
+	text-align: center;
+	margin: 0;
+	box-shadow: inset -1px 1px 3px #00000012;;
+}
+
+.dm-table input[type="search"] {
+	width: auto;
+	text-align: left;
+}
+
+.dm-table table td input[type="text"],
+.dm-table table th input[type="text"] {
+	width: auto;
+	text-align: left;
+}
+
+.dm-table .dm-nav-btn {
+	min-width: 20px;
+}
+
+.dm-table select {
+	vertical-align: middle;
+	padding: 4px 0px;
+	border: 1px solid #d4d4d4;
+	border-bottom-width: 2px;
+	background-color: #fbfbfb;
+	border-radius: 3px;
+}
+
+/**
+ * Table
+ */
+ 
+.dm-table .table-fixed {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.dm-table table,
+.dm-table td,
+.dm-table th {
+	background-color: #fff;
+	border-collapse: collapse !important;
+	border: 0 none !important;
+	padding: 10px;
+	text-align: left;
+	margin: 0 !important;
+}
+
+.dm-table .dmct-trow-odd th,
+.dm-table .dmct-trow-odd td {
+	background-color: #f7f7f7;
+	border-top: 1px solid #fff;
+}
+
+.dm-table th {
+	padding: 15px 10px;
+	font-weight: bold !important;
+	vertical-align: middle !important;
+}
+
+.dm-table td {
+	vertical-align: top;
+}
+
+.dm-table thead td,
+.dm-table tfoot td {
+	font-weight: bold;
+	vertical-align: middle;
+	width: 10%;
+}
+
+.dm-table .head-dmth {
+	border-bottom: 1px solid #ddd !important;
+}
+
+.dm-table .foot-dmth {
+	border-top: 1px solid #ddd !important;
+}
+
+.dm-table .dm-sort a {
+	text-decoration: none;
+	color: #0073aa;
+}
+
+.dm-table .dm-sort a:hover {
+	color: #00a0d2;
+}
+
+/**
+ * Structure
+ */
+ 
+.dm-table {
+	background-color: #fff;
+	border: 1px solid #ddddddc7;
+	border-bottom: 0 none;
+	box-shadow: 0 0 10px #00000014;
+	border-bottom-width: 2px;
+	border-radius: 4px;
+	overflow: hidden;
+	font-size: 14px;
+	font-family: "Open Sans", Arial, Helvetica, Helvetica Neue, sans-serif;
+	margin: 20px;
+}
+
+/**
+ * Commons
+ */
+.dm-table .dm-input {
+	margin-right: 10px;
+}
+
+.dm-table .dm-search .dm-input {
+	margin-right: 0;
+}
+
+/**
+ * Settings area
+ */
+
+.dm-settings {
+	padding: 10px;
+	background-color: #fbfbfb;
+	border-bottom: 1px solid #ddd;
+	border-top: 1px solid #fff;
+}
+
+.dm-settings:after {
+	content: " ";
+	display: block;
+	clear: both;
+}
+
+.dm-search {
+	float: right;
+	width: 50%;
+	text-align: right;
+}
+
+.dm-pagsort {
+	float: left;
+	width: 50%;
+}
+
+/**
+ * Manage area
+ */
+ 
+.dm-manage {
+	padding: 10px;
+	border-bottom: 1px solid #ddd;
+	border-top: 1px solid #fff;
+	background-color: #f7f7f7;
+}
+
+.dm-manage:after {
+	content: " ";
+	clear: both;
+	display: block;
+}
+
+.dm-actions {
+	width: 70%;
+	float: left;
+	text-align: left;
+}
+
+.dm-pagination {
+	width: 30%;
+	float: right;
+	text-align: right;
+}
+
+/**
+ * Before and after list areas
+ */
+
+.dm-before-list,
+.dm-after-list {
+	padding: 10px;
+	background-color: #fbfbfb;
+	border-top: 0;
+	border-bottom: 1px solid #ddd;
+}
+
+.dm-before-list:after,
+.dm-after-list:after {
+	content: " ";
+	display: block;
+	clear: both;
+}
+
+.dm-after-list {
+	border-top: 1px solid #ddd;
+}
+
+.dm-inline-menu {
+	float: left;
+	width: 80%;
+	line-height: 2;
+}
+
+/**
+ * Table Submit area
+ */
+.dm-submit-top,
+.dm-submit-bottom {
+	float: right;
+	width: 20%;
+	box-sizing: border-box;
+	text-align: right;
+}
+
+.dm-inline-menu.dm-no-submit,
+.dm-submit-top.dm-no-inline-menu {
+	float:none;
+	width: 100%;
+	box-sizing: border-box;
+}
