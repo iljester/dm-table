@@ -5,7 +5,7 @@
  *
  * Table items generator to manage db elements
  * 
- * @version 1.0 beta
+ * @version     1.0
  * @author 	Davide Mura (iljester)  <muradavi@gmail.com>
  * @site 	https://www.iljester.com/
  * @license GPL2
