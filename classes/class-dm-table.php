@@ -172,6 +172,18 @@ class DM_Table {
 	 * @since 1.0
 	 */
 	public $query_names = array();
+	
+	/**
+	 * $data
+	 * Contains an array of values that define the table content
+	 * set through setData
+	 *
+	 * @author Davide Mura (iljester) <muradavi@gmail.com>
+	 * @var array
+	 * @access public
+	 * @since 1.0
+	 */
+	public $data = array();
 
 	/**
 	 * $_search_args
@@ -1767,7 +1779,9 @@ class DM_Table {
 				$instance = $this;
 			}
         
-            return $callback( $instance, $args );
+            	$data = $callback( $instance, $args );
+		$this->data = $data;
+		return $data;
         
         }
         return false;
@@ -1798,8 +1812,14 @@ class DM_Table {
 		$args 		= self::parseArgs( $args, $defaults );
 		$form 		= self::parseArgs( $args['form'], $defaults['form'] );
 
-		$this->_header  	= (array) $args['header'];
-		$this->_content 	= (array) $args['content'];
+		$this->_header = (array) $args['header'];
+		
+		if( ! is_array( $args['content'] ) || empty( $args['content'] ) ) {
+			$args['content'] = $this->data; // if set content through setData.
+		} else {
+			$args['content'] = (array) $args['content'];
+		}
+		$this->_content = $args['content'];
 
 		unset( $args['header'] );
 		unset( $args['content'] );
