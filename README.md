@@ -18,5 +18,5 @@ GPL2
 ## Donate
 [Donate](https://www.iljester.com/donate-donazione/)
 
-##Versions
+## Versions
 [Archive](https://www.iljester.com/dm-table-versions/)
