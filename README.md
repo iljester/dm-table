@@ -6,6 +6,9 @@ However, the package also includes DM_Table_WP, which is a class prepared specif
 
 __Note: all passed values should be sanitized and escaped__
 
+## Version
+1.1.0
+
 ## License
 GPL2
 
