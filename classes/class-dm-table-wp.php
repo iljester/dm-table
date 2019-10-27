@@ -5,7 +5,7 @@
  * Table items generator to manage db elements in Wordpress
  * Require DM_Table class
  * 
- * @version 1.0 beta
+ * @version     1.1.0
  * @author 	Davide Mura (iljester)  <muradavi@gmail.com>
  * @site 	https://www.iljester.com/
  * @license GPL2
@@ -704,11 +704,9 @@ class DM_Table_WP {
 			$args = (array) $args;
 		}
 
-		$data = $dm_table->setData( $callback, $this, $args, $syntax_only );
+		$dm_table->setData( $callback, $this, $args, $syntax_only );
 
-		if( $data !== false ) {
-			$this->data = $data;
-		}
+		$this->data = $dm_table->data;
 
 	}
 
