@@ -5,7 +5,7 @@
  * Table items generator to manage db elements in Wordpress
  * Require DM_Table class
  * 
- * @version     1.1.0
+ * @version     1.1.1
  * @author 	Davide Mura (iljester)  <muradavi@gmail.com>
  * @site 	https://www.iljester.com/
  * @license GPL2
@@ -555,23 +555,41 @@ class DM_Table_WP {
 	 * Build pagination
 	 *
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
-	 * @params
-	 * 		$rows		|array	// data content to build total rows
-	 * 		$perpage 	|array 	// default number items perpage
+	 * @params $args		|array	// data content to build pagination
 	 * @access public
 	 * @return void
 	 * @since 1.0
 	 */
-	public function pagination( $rows = null, $perpage = null, $perpage_off = false ) {
+	public function pagination( $args = array() ) {
 
 		if( false === $this->dm_table ) {
 			return;
 		}
+		
+		$domain		= $this->domain;
+		
+		$defaults = array(
+			'rows' 			=> '',
+			'perpage' 		=> '',
+			'hide' 			=> false,
+			'input_name' 	=> 'limit',
+			'class' 		=> 'limit perpage',
+			'value' 		=> __('Limit', $domain )
+		);
+		
+		$args  = DM_Table::parseArgs( $args, $defaults );
+		$args  = DM_Table::unsetArgs( $args, array_keys( $defaults ) );
+		
+		$rows 			= $args['rows'];
+		$perpage_off 	= $args['hide'];
+		$input_name     = $args['input_name'];
+		$class          = $args['class'];
+		$value			= $args['value'];
 
 		$dm_table 	= $this->dm_table;
-		$domain		= $this->domain;
-		$perpage	= !isset( $perpage ) ? $dm_table->perpage : DM_Table::absint( $perpage );
-
+		$default    = DM_Table::absint( $args['perpage'] );
+		$perpage	= !isset( $args['perpage'] ) ? $dm_table->perpage : DM_Table::absint( $args['perpage'] );
+		
 		// set perpage
 		if( (bool) $perpage_off === false ) {
 			$dm_table->setPerpage(
@@ -579,15 +597,15 @@ class DM_Table_WP {
 				DM_Table::input(
 					'text',
 					array(
-						'name' => 'limit',
-						'value'	=> DM_Table::action( INPUT_GET, 'limit', 5 ),
-						'class' => 'limit perpage'
+						'name'  => DM_Table::normalizeString( $input_name ),
+						'value'	=> DM_Table::action( INPUT_GET, 'limit', $default ),
+						'class' => DM_Table::escValue( $class )
 					)
 				),
 				DM_Table::input(
 					'submit',
 					array(
-						'value' => __( 'Limit', $domain )
+						'value' => DM_Table::escValue( $value )
 					)
 				)
 			);
@@ -623,7 +641,7 @@ class DM_Table_WP {
 	 * @return void
 	 * @since 1.0
 	 */
-	public function action( $id = -1, $column_action = '', $is_disabled = false ) {
+	public function action( $id = -1, $column_action = '', $is_disabled = false, $custom_class = '' ) {
 
 		if( false === $this->dm_table ) {
 			return;
@@ -641,12 +659,14 @@ class DM_Table_WP {
 		$domain	  = $this->domain;
 		$tag_id   = ( $column_action !== '' ? $column_action . '-' . $id : $column_action . '-none' );
 		$disabled = (bool) $is_disabled === false ? 'disabled' : '';
+		$custom_class = DM_Table::normalizeString( $custom_class, true );
+		$custom_class = $column_action . ( $custom_class !== '' ? ' ' . $custom_class : '' );
 		
 		$action = DM_Table::input( 'checkbox',
 			array(
 				'name'  	=> $name,
 				'value' 	=> $id,
-				'class' 	=> $column_action,
+				'class' 	=> $custom_class,
 				'id'	   	=> $tag_id,
 				'disabled'	=> $disabled,
 				'label'		=> array(
