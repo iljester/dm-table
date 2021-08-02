@@ -5,7 +5,7 @@
  *
  * Table items generator to manage db elements
  * 
- * @version     1.1.0
+ * @version     1.1.1
  * @author 	Davide Mura (iljester)  <muradavi@gmail.com>
  * @site 	https://www.iljester.com/
  * @license GPL2
@@ -260,7 +260,7 @@ class DM_Table {
 	 * @access protected
 	 * @since 1.0
 	 */
-    	protected $_table_args = array();
+    protected $_table_args = array();
 
     	/**
 	 * $_header
@@ -662,7 +662,7 @@ class DM_Table {
 	public static function escValue( $value = '', $filter = false ) {
 
 		// empty value and is not an array, return empty
-		if( empty( $value ) && !is_array( $value ) ) {
+		if( empty( $value ) && $value != 0 && !is_array( $value ) ) {
 			return '';
 		}
 
@@ -673,6 +673,11 @@ class DM_Table {
 
 		// we don't escape a boolean values
 		if( is_bool( $value ) ) {
+			return $value;
+		}
+		
+		// we don't escape a number value
+		if( is_numeric( $value ) ) {
 			return $value;
 		}
 
@@ -710,8 +715,10 @@ class DM_Table {
 	 * @access public
 	 * @return string
 	 * @since 1.0
+	 *
+	 * add $preserve_space @sice 1.2
 	 */
-	public static function normalizeString( $string = null ) {
+	public static function normalizeString( $string = null, $preserve_space = false ) {
 
 		// is null return empty
 		if( ! isset( $string ) ) {
@@ -729,10 +736,66 @@ class DM_Table {
 		// trim string
 		$string = trim( $string );
 
-		// then normalize: accepts only a-z0-9# or _- values
-		$normalize = preg_replace( '/[^a-z0-9\-_#]/i', '', $string );
+		// then normalize: accepts only "a-z0-9#" or "_-" values. If $preserve_space is set to true, space also.
+		if( $preserve_space === false ) {
+			$normalize = preg_replace( '/[^a-z0-9\-_#]/i', '', $string );
+		} else {
+			$normalize = preg_replace( '/[^a-z0-9\-_# ]/i', '', $string );
+		}
 
 		return $normalize;
+	}
+	
+	/**
+	 * Filters tags like strip_tags, but also allows you to select attributes. Experimental.
+	 *
+	 * @author Davide Mura (iljester) <muradavi@gmail.com>
+	 * @params
+	 * 		$string 	   |string	// the html string to filter
+	 *  	$return_array  |array	// allowed tags and atts. E.g. ['a' => 'href,title,class', 'div' => 'class,id,title']
+	 * @access public
+	 * @return html
+	 * @since 1.1.0
+	 */
+	public static function filterTags( $string = "", $allowed = array(), $decode = false ) {
+		
+		if( empty( $string ) ) {
+			return '';
+		}
+    
+		$new_string = array();
+		$old_string = array();
+		foreach( $allowed as $t => $a ) {
+			preg_match_all( "/<{$t}(.*?)>/i", $string, $matches );
+			if( ! empty( $matches[0][0] ) ) {
+				$s = preg_split( '/"\s+/', $matches[0][0] );
+				$n = array();
+				foreach( $s as $k ) {
+					$n[] = trim( str_replace( array( "<{$t}", "\">" ), "", $k ) );
+				}
+				$box = array();
+				$attr = explode(',', $allowed[$t] );
+				foreach( $n as $i ) {
+					foreach( $attr as $at ) {
+						$result = stripos($i, $at );
+						if( false !== $result ) {
+							$box[] = $i . '"';
+						}
+					}
+				}
+				$new_string[] = "<{$t} " . implode(' ', $box) . ">";
+				$old_string[] = $matches[0][0];
+			}
+		}
+
+		$string = str_replace($old_string, $new_string, $string );
+		
+		if( (bool) $decode === true ) {
+			return htmlspecialchars_decode( $string );
+		} else {
+			return $string;
+		}
+		
 	}
 
 	/**
@@ -799,11 +862,7 @@ class DM_Table {
 	 * @return html|string|array
 	 * @since 1.0
 	 */
-	public static function input( $target_input = 'text', $args = array(), $return_array = false ) {
-    
-		if( strlen( $target_input ) === 0 ) {
-			$target_input = 'text';
-		}
+	public static function input( $target_input = false, $args = array(), $return_array = false ) {
 
 		// convert boolean values in int values
 		$args = array_map( function( $value ) {
@@ -818,14 +877,25 @@ class DM_Table {
 				}
 			},
 		$args );
+		
+		/**
+		 * $target_input will be used to determine the type of input to create. 
+		 * $type, instead, will be used to define the input tag
+		 * Do not use $type to determine type of input.
+		 */
+		$type = $target_input;
+		
+		// tbutton will be use for type="button". If you want using <button>, use simply button as $target_input
+		if( $target_input === 'tbutton' ) {
+			$type = 'button';
+		}
 
-		// defaults values
+		// defaults and commons values
 		$defaults = array(
-			'type'  	 => $target_input,
+			'type'  	 => $type,
 			'name'  	 => false,
 			'value' 	 => false,
-			'label' 	 => false,
-			'disabled'	 => false
+			'label' 	 => false
 		);
 			
 		/**
@@ -845,13 +915,18 @@ class DM_Table {
 
 		// parse args
 		$args = self::parseArgs( $args, $defaults, ['type', 'name', 'value'] );
+		
+		// the compiler didn't set $target_input and didn't set 'type' in the array?
+		$args['type'] = ( $args['type'] === false ? 'text' : $args['type'] );
 
 		/**
 		 * If no set class, convert name in class
 		 * If the name represents an array, also remove the square brackets
+		 * In self::normalizestring set true to preserve space and multi classes
 		 */
 		if( (bool) preg_match( '/\[(.*?)\]/', $args['name'] ) === true ) {
-			$args['class']  = self::normalizeString( !isset( $args['class'] ) ? $args['name'] : $args['class'] );
+			$class_v = ( !isset( $args['class'] ) ? $args['name'] : $args['class'] );
+			$args['class']  = self::normalizeString( $class_v, true );
 		}
 
 		if( isset( $args['id'] ) ) {
@@ -864,16 +939,39 @@ class DM_Table {
 		if( (bool) $return_array === true ) {
 			return $args;
 		}
+		
+		/**
+		 * Boolean values
+		 * 
+		 * disabled,
+		 * autofocus,
+		 * formnovalidate,
+		 * hidden,
+		 * multiple,
+		 * readonly,
+		 * required
+		 * 
+		 * Note: "Selected" and "checked" have been excluded, as they will be handled separately.
+		 */
+		$boolean_values = array( 'disabled', 'autofocus', 'formnovalidate', 'hidden', 'multiple', 'readonly', 'required' );
+		foreach( $boolean_values as $val ) {
+			if( isset( $args[$val] ) && (bool) $args[$val] === false ) {
+				unset( $args[$val] );
+			}
+		}
 
 		/**
 		 * prepare label and remove it from array
 		 */
 		$label_defaults = array(
-			'id' 		=> false,
-			'class' 	=> false,
-			'for' 		=> false,
-			'text'		=> false,
-			'position' 	=> 'wrap'
+			'id' 		 => false,
+			'class' 	 => false,
+			'for' 		 => false,
+			'text'		 => false,
+			'position' 	 => 'wrap',
+			'html'		 => false,
+			'float_text' => false,
+			'style'		 => false
 		);
 
 		if( (bool) $args['label'] !== false ) {
@@ -889,7 +987,7 @@ class DM_Table {
 					unset( $args['label'][$key] );
 				} else {
 					if( false !== $args['label'][$key] ) {
-						if( $key !== 'text' ) {
+						if( $key !== 'text' && $key !== 'class' ) {
 							$args['label'][$key] = self::normalizeString( $args['label'][$key] );
 						} else {
 							$args['label'][$key] = self::escValue( $args['label'][$key] );
@@ -903,11 +1001,30 @@ class DM_Table {
 		$label = $args['label'];
 		unset( $args['label'] );
 		
-		$input_label = ( (bool) $label !== false ? self::escValue( $label['text'], true ) : '' );
+		$html = $label['html'];
+		unset( $label['html'] );
+		
+		if( $html !== false ) {
+			if( (bool) $html === true ) {
+				$allowed = ['a' => 'href,target,title,alt', 'span' => 'class,id', 'strong' => '', 'em' => '', 'i' => '', 'b' => '', 'u' => ''];
+			} else {
+				if( is_array( $html ) ) {
+					$allowed = $html; // it is necessary to observe the syntax: ['tag' => 'attribut1, attribut2, attribute3 ecc.']
+				} else {
+					$allowed = false;
+				}
+			}
+			$input_label = ( (bool) $label !== false ? self::filterTags( $label['text'], $allowed, true ) : '' );
+		} else {
+			$input_label = ( (bool) $label !== false ? self::escValue( $label['text'], true ) : '' );
+		}
 		unset( $label['text'] );
 
 		$label_position = $label['position'];
 		unset( $label['position'] );
+		
+		$label_float_text = in_array( $label['float_text'], array('left', 'right') ) ? $label['float_text'] : false;
+		unset( $label['float_text'] );
 
 		/**
 		 * Setup inputs
@@ -928,14 +1045,19 @@ class DM_Table {
 			
 				$attrs_input = array();
 				foreach( $args as $key => $val ) {
-					if( false !== (bool) $val ) {
+					if( false !== $val ) {
 						$attrs_input[] = sprintf( '%1$s="%2$s"', self::escValue( $key, true ), self::escValue( $val, true ) );
 					}
 				}
 				
 				$input .= '<select ' . implode( ' ', $attrs_input ) . ' >';
 				foreach( $choices as $choice => $text ) {
-					$flagged = $value == $choice ? ' selected' : '';
+                    // multiple values
+                    if( is_array( $value ) ) {
+                    	$flagged = in_array( $choice, $value ) ? ' selected' : '';
+                    } else {
+						$flagged = $value == $choice ? ' selected' : '';
+                    }
 					$input .= sprintf( '<option value="%1$s"%2$s>%3$s</option>',
 						self::escValue( $choice, true ),
 						self::escValue( $flagged, true ),
@@ -947,17 +1069,26 @@ class DM_Table {
 				if( false !== $label ) {
 					$attrs_label = array();
 					foreach( $label as $key => $val ) {
-						if( false !== (bool) $val ) {
+						if( false !== $val ) {
 							$attrs_label[] = sprintf( '%1$s="%2$s"', self::escValue( $key, true ), self::escValue( $val, true ) );
 						}
 					}
 					switch( $label_position ) {
 						case 'wrap' :
-							$output = sprintf( '<label%1$s><span>%2$s</span>%3$s</label>',
-								' ' . implode( ' ', $attrs_label ),
-								$input_label,
-								$input
-							) . PHP_EOL;
+							$float = ( false === $label_float_text ? 'left' : $label_float_text );
+							if( ( $float === 'left' ) ) {
+								$output = sprintf( '<label%1$s><span>%3$s</span>%2$s</label>',
+									' ' . implode( ' ', $attrs_label ),
+									$input,
+									$input_label
+								) . PHP_EOL;
+							} else {
+								$output = sprintf( '<label%1$s>%2$s<span>%3$s</span></label>',
+									' ' . implode( ' ', $attrs_label ),
+									$input,
+									$input_label
+								) . PHP_EOL;
+							}
 							break;
 						case 'before' :
 							$output = sprintf( '<label%1$s>%2$s</label>%3$s',
@@ -981,68 +1112,88 @@ class DM_Table {
 			} 
 			elseif( $target_input === 'radio' ) {
 				
+				unset( $args['value'] ); // no need here
+				$compare = $args['compare'];
+				unset( $args['compare'] );
 				$choices = $args['choices'];
 				unset( $args['choices'] );
+				$id = $args['id'];
+				unset( $args['id'] );
 				
 				$attrs_input = array();
 				foreach( $args as $key => $val ) {
-					if( false !== (bool) $val ) {
+					if( false !== $val ) {
 						$attrs_input[] = sprintf( '%1$s="%2$s"', self::escValue( $key, true ), self::escValue( $val, true ) );
 					}
 				}
-				
-				foreach( $choices as $choice => $text ) {
-					if( (bool) $value !== false ) {
-						$flagged = $value === $choice ? ' checked' : '';
+
+				$output = ''; // this because for radio we use a foreach...
+				foreach( $choices as $choice => $input_label ) {
+					
+					$attrs_input['value'] = sprintf( 'value="%s"', self::escValue( $choice ) );
+					$attrs_input['id'] = sprintf( 'id="%s"', self::escValue( $id . '-' . $choice ) );
+					if( ! is_array( $compare ) ) {
+						$flagged = $compare === $choice ? ' checked' : '';
+					} else {
+						$flagged = in_array( $choice, $compare ) ? ' checked' : '';
 					}
+					$input = sprintf( '<input %1$s%2$s />', implode( ' ', $attrs_input ), $flagged ) . PHP_EOL;
 					if( false !== $label ) {
+						
+						$for = $label['for'];
+						unset( $label['for'] );
+						$label['for'] = self::escValue( $id . '-' . $choice );
+						
 						$attrs_label = array();
 						foreach( $label as $key => $val ) {
-							if( false !== (bool) $val ) {
+							if( false !== $val ) {
 								$attrs_label[] = sprintf( '%1$s="%2$s"', self::escValue( $key, true ), self::escValue( $val, true ) );
 							}
 						}
 						switch( $label_position ) {
 							case 'wrap' :
-								$input .= sprintf( '<label%1$s><input%1$s%2$s><span>%3$s</span></label>',
-									' ' . implode( ' ', $attrs_label ),
-									' ' . implode( ' ', $attrs_input ),
-									self::escValue( $flagged, true ),
-									self::escValue( $text, true )
-								) . PHP_EOL;
+								$float = ( false === $label_float_text ? 'right' : $label_float_text );
+								if( ( $float === 'right' ) ) {
+									$output .= sprintf( '<label%1$s>%2$s<span>%3$s</span></label>',
+										' ' . implode( ' ', $attrs_label ),
+										$input,
+										$input_label
+									) . PHP_EOL;
+								} else {
+									$output .= sprintf( '<label%1$s><span>%3$s</span>%2$s</label>',
+										' ' . implode( ' ', $attrs_label ),
+										$input,
+										$input_label
+									) . PHP_EOL;
+									
+								}
 								break;
 							case 'before' :
-								$input .= sprintf( '<label%1$s>%2$s</label><input%1$s%2$s>',
+								$output .= sprintf( '<label%1$s><span>%2$s</span></label>%3$s',
 									' ' . implode( ' ', $attrs_label ),
-									self::escValue( $text, true ),
-									' ' . implode( ' ', $attrs_input ),
-									self::escValue( $flagged, true )
+									$input_label,
+									$input
 								) . PHP_EOL;
 								break;
 							case 'after' :
-								$input .= sprintf( '<input%1$s%2$s><label%3$s>%4$s</label>',
-									' ' . implode( ' ', $attrs_input ),
-									self::escValue( $flagged, true ),
+								$output .= sprintf( '%1$s<label%2$s><span>%3$s</span></label>',
+									$input,
 									' ' . implode( ' ', $attrs_label ),
-									self::escValue( $text, true )
+									$input_label
 								) . PHP_EOL;
 								break;
 						}
 					} else {
-						$input = sprintf( '<input %1$s%2$s>',
-							implode( ' ', $attrs_input ),
-							self::escValue( $flagged, true )
-						) . PHP_EOL;
+						$output .= $input;
 					}
 				}
-				
-				$output = $input;
 				
 			}
 			
 		}
 
 		// create textarea or button
+		// note: for type=button, use "tbutton" instead button or leave empty or set false $target_input and use "type" in $args array
 		elseif( $target_input === 'textarea' || $target_input === 'button' ) {
 
 			$type = $args['type'];
@@ -1056,7 +1207,7 @@ class DM_Table {
 
 			$attrs_input = array();
 			foreach( $args as $key => $val ) {
-				if( false !== (bool) $val ) {
+				if( false !== $val ) {
 					$attrs_input[] = sprintf( '%1$s="%2$s"', self::escValue( $key, true ), self::escValue( $val, true ) );
 				}
 			}
@@ -1076,17 +1227,26 @@ class DM_Table {
 			if( false !== $label ) {
 				$attrs_label = array();
 				foreach( $label as $key => $val ) {
-					if( false !== (bool) $val ) {
+					if( false !== $val ) {
 						$attrs_label[] = sprintf( '%1$s="%2$s"', self::escValue( $key, true ), self::escValue( $val, true ) );
 					}
 				}
 				switch( $label_position ) {
 					case 'wrap' :
-						$output = sprintf( '<label%1$s><span>%2$s</span>%3$s</label>',
-							' ' . implode( ' ', $attrs_label ),
-							$input_label,
-							$input
-						) . PHP_EOL;
+						$float = ( false === $label_float_text ? 'left' : $label_float_text );
+						if( $float === 'left' ) {
+							$output = sprintf( '<label%1$s><span>%2$s</span>%3$s</label>',
+								' ' . implode( ' ', $attrs_label ),
+								$input_label,
+								$input
+							) . PHP_EOL;
+						} else {
+							$output = sprintf( '<label%1$s>%3$s<span>%2$s</span></label>',
+								' ' . implode( ' ', $attrs_label ),
+								$input_label,
+								$input
+							) . PHP_EOL;	
+						}
 						break;
 					case 'before' :
 						$output = sprintf( '<label%1$s>%2$s</label>%3$s',
@@ -1119,27 +1279,37 @@ class DM_Table {
 			
 			$attrs_input = array();
 			foreach( $args as $key => $val ) {
-				if( false !== (bool) $val ) {
+				if( false !== $val ) {
 					$attrs_input[] = sprintf( '%1$s="%2$s"', self::escValue( $key, true ), self::escValue( $val, true ) );
 				}
 			}
 			
 			if( $target_input !== 'checkbox' ) {
+				
 				$input .= sprintf( '<input %s />', implode( ' ', $attrs_input ) ) . PHP_EOL;
 				if( false !== $label ) {
 					$attrs_label = array();
 					foreach( $label as $key => $val ) {
-						if( false !== (bool) $val ) {
+						if( false !== $val ) {
 							$attrs_label[] = sprintf( '%1$s="%2$s"', self::escValue( $key, true ), self::escValue( $val, true ) );
 						}
 					}
 					switch( $label_position ) {
 						case 'wrap' :
-							$output = sprintf( '<label%1$s><span>%2$s</span>%3$s</label>',
-								' ' . implode( ' ', $attrs_label ),
-								$input_label,
-								$input
-							) . PHP_EOL;
+							$float = ( false ===  $label_float_text ? 'left' : $label_float_text );
+							if( $float === 'left' ) {
+								$output = sprintf( '<label%1$s><span>%2$s</span>%3$s</label>',
+									' ' . implode( ' ', $attrs_label ),
+									$input_label,
+									$input
+								) . PHP_EOL;
+							} else {
+								$output = sprintf( '<label%1$s>%3$s<span>%2$s</span></label>',
+									' ' . implode( ' ', $attrs_label ),
+									$input_label,
+									$input
+								) . PHP_EOL;
+							}
 							break;
 						case 'before' :
 							$output = sprintf( '<label%1$s>%2$s</label>%3$s',
@@ -1162,23 +1332,37 @@ class DM_Table {
 			} else {
 				$flagged = '';
 				if( $args['value'] !== false ) {
-					$flagged = $args['value'] === $compare ? ' checked' : '';
+					if( ! is_array( $compare ) ) { 
+						$flagged = $args['value'] === $compare ? ' checked' : '';
+					} else {
+						// if you want create a multiple checkboxes
+						$flagged = in_array( $args['value'], $compare ) ? ' checked' : '';
+					}
 				}
 				$input .= sprintf( '<input %1$s%2$s />', implode( ' ', $attrs_input ), $flagged ) . PHP_EOL;
 				if( false !== $label ) {
 					$attrs_label = array();
 					foreach( $label as $key => $val ) {
-						if( false !== (bool) $val ) {
+						if( false !== $val ) {
 							$attrs_label[] = sprintf( '%1$s="%2$s"', self::escValue( $key, true ), self::escValue( $val, true ) );
 						}
 					}
 					switch( $label_position ) {
 						case 'wrap' :
-							$output = sprintf( '<label%1$s><span>%2$s</span>%3$s</label>',
-								' ' . implode( ' ', $attrs_label ),
-								$input_label,
-								$input
-							) . PHP_EOL;
+							$float = ( false === $label_float_text ? 'right' : $label_float_text );
+							if( $float === 'left' ) {
+								$output = sprintf( '<label%1$s><span>%2$s</span>%3$s</label>',
+									' ' . implode( ' ', $attrs_label ),
+									$input_label,
+									$input
+								) . PHP_EOL;
+							} else {
+								$output = sprintf( '<label%1$s>%3$s<span>%2$s</span></label>',
+									' ' . implode( ' ', $attrs_label ),
+									$input_label,
+									$input
+								) . PHP_EOL;
+							}
 							break;
 						case 'before' :
 							$output = sprintf( '<label%1$s>%2$s</label>%3$s',
@@ -1198,6 +1382,7 @@ class DM_Table {
 				} else {
 					$output = $input;
 				}
+			
 			}
 			
 		}
@@ -2310,13 +2495,13 @@ class DM_Table {
 	}
 
 	/**
-         * Render table header
-         *
-         * @author Davide Mura (iljester) <muradavi@gmail.com>
-         * @access protected
-         * @return void
-         * @since 1.0
-         */    
+	 * Render table header
+	 *
+	 * @author Davide Mura (iljester) <muradavi@gmail.com>
+	 * @access protected
+	 * @return void
+	 * @since 1.0
+	 */    
 	protected function _header() {
 
 		return $this->_metaHeader();
@@ -2731,8 +2916,8 @@ class DM_Table {
 
 	}
 
-       /**
-         * Display complete table
+   /**
+	 * Display complete table
 	 *
 	 * @author Davide Mura (iljester) <muradavi@gmail.com>
 	 * @access public
