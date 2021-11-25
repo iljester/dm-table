@@ -27,7 +27,7 @@
 
 #namespace DM_Table\DM_Table
 
-class DM_Table {
+class DM_Table { 
 
 	/**
 	 * $base_url
