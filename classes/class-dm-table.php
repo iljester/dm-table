@@ -5,7 +5,7 @@
  *
  * Table items generator to manage db elements
  * 
- * @version     1.2
+ * @version     1.2.1
  * @author 	Davide Mura (iljester)  <muradavi@gmail.com>
  * @site 	https://www.iljester.com/
  * @license GPL2
@@ -724,6 +724,10 @@ class DM_Table {
 		if( ! isset( $string ) ) {
 			return '';
 		}
+		
+		if( strlen( $string ) === 0 ) {
+			return $string;
+		}
 
 		// we don't normalize arrays, boolean values or object
 		if( is_bool( $string ) || is_array( $string ) || is_object( $string ) ) {
@@ -926,6 +930,7 @@ class DM_Table {
 		 */
 		if( (bool) preg_match( '/\[(.*?)\]/', $args['name'] ) === true ) {
 			$class_v = ( !isset( $args['class'] ) ? $args['name'] : $args['class'] );
+			$class_v = preg_replace('/[^a-z0-9]/', '-', $class_v );
 			$args['class']  = self::normalizeString( $class_v, true );
 		}
 
@@ -1001,31 +1006,35 @@ class DM_Table {
 		$label = $args['label'];
 		unset( $args['label'] );
 		
-		$html = $label['html'];
-		unset( $label['html'] );
-		
-		if( $html !== false ) {
-			if( (bool) $html === true ) {
-				$allowed = ['a' => 'href,target,title,alt', 'span' => 'class,id', 'strong' => '', 'em' => '', 'i' => '', 'b' => '', 'u' => ''];
-			} else {
-				if( is_array( $html ) ) {
-					$allowed = $html; // it is necessary to observe the syntax: ['tag' => 'attribut1, attribut2, attribute3 ecc.']
+		if( $label !== false ) {
+			
+			$html = $label['html'];
+			unset( $label['html'] );
+			
+			if( $html !== false ) {
+				if( (bool) $html === true ) {
+					$allowed = ['a' => 'href,target,title,alt', 'span' => 'class,id', 'strong' => '', 'em' => '', 'i' => '', 'b' => '', 'u' => ''];
 				} else {
-					$allowed = false;
+					if( is_array( $html ) ) {
+						$allowed = $html; // it is necessary to observe the syntax: ['tag' => 'attribut1, attribut2, attribute3 ecc.']
+					} else {
+						$allowed = false;
+					}
 				}
+				$input_label = ( (bool) $label !== false ? self::filterTags( $label['text'], $allowed, true ) : '' );
+			} else {
+				$input_label = ( (bool) $label !== false ? self::escValue( $label['text'], true ) : '' );
 			}
-			$input_label = ( (bool) $label !== false ? self::filterTags( $label['text'], $allowed, true ) : '' );
-		} else {
-			$input_label = ( (bool) $label !== false ? self::escValue( $label['text'], true ) : '' );
+			unset( $label['text'] );
+
+			$label_position = $label['position'];
+			unset( $label['position'] );
+			
+			$label_float_text = in_array( $label['float_text'], array('left', 'right') ) ? $label['float_text'] : false;
+			unset( $label['float_text'] );
+
 		}
-		unset( $label['text'] );
-
-		$label_position = $label['position'];
-		unset( $label['position'] );
 		
-		$label_float_text = in_array( $label['float_text'], array('left', 'right') ) ? $label['float_text'] : false;
-		unset( $label['float_text'] );
-
 		/**
 		 * Setup inputs
 		 */
